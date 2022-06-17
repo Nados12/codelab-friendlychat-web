@@ -49,18 +49,24 @@ import { getFirebaseConfig } from './firebase-config.js';
 
 // Signs-in Friendly Chat.
 async function signIn() {
-  alert('TODO: Implement Google Sign-In');
+  // Sign in Firebase using popup auth and Google as the identity provider.
+  var provider = new GoogleAuthProvider();
+  await signInWithPopup(getAuth(), provider);
+}
   // TODO 1: Sign in Firebase with credential from the Google user.
 }
 
 // Signs-out of Friendly Chat.
+// Signs-out of Friendly Chat.
 function signOutUser() {
-  // TODO 2: Sign out of Firebase.
+  // Sign out of Firebase.
+  signOut(getAuth());
 }
 
-// Initiate firebase auth
+// Initialize firebase auth
 function initFirebaseAuth() {
-  // TODO 3: Subscribe to the user's signed-in status
+  // Listen to auth state changes.
+  onAuthStateChanged(getAuth(), authStateObserver);
 }
 
 // Returns the signed-in user's profile Pic URL.
@@ -148,15 +154,15 @@ function authStateObserver(user) {
     var profilePicUrl = getProfilePicUrl();
     var userName = getUserName();
 
-    // Set the user's profile pic and name.
-    userPicElement.style.backgroundImage =
-      'url(' + addSizeToGoogleProfilePic(profilePicUrl) + ')';
-    userNameElement.textContent = userName;
+// Returns the signed-in user's profile Pic URL.
+function getProfilePicUrl() {
+  return getAuth().currentUser.photoURL || '/images/profile_placeholder.png';
+}
 
-    // Show user's profile and sign-out button.
-    userNameElement.removeAttribute('hidden');
-    userPicElement.removeAttribute('hidden');
-    signOutButtonElement.removeAttribute('hidden');
+    // Returns the signed-in user's display name.
+function getUserName() {
+  return getAuth().currentUser.displayName;
+}
 
     // Hide sign-in button.
     signInButtonElement.setAttribute('hidden', 'true');
@@ -176,11 +182,10 @@ function authStateObserver(user) {
 }
 
 // Returns true if user is signed-in. Otherwise false and displays a message.
-function checkSignedInWithMessage() {
-  // Return true if the user is signed in Firebase
-  if (isUserSignedIn()) {
-    return true;
-  }
+// Returns true if a user is signed-in.
+function isUserSignedIn() {
+  return !!getAuth().currentUser;
+}
 
   // Display a message to the user using a Toast.
   var data = {
